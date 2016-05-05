@@ -48,7 +48,7 @@ if(!class_exists('DomeGIS_Plugin')) {
     function relationship_meta_box() {
       $options = get_domegis_options();
       ?>
-      <p><?php _e('Selected related tables and features:', 'domegis'); ?></p>
+      <p><?php _e('Select related tables and features:', 'domegis'); ?></p>
       <p>
         <input type="text" class="domegis-search" placeholder="<?php _e('Search contents', 'domegis'); ?>" />
       </p>
