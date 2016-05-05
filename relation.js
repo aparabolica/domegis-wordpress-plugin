@@ -9,13 +9,30 @@
         var box = $(this);
         var container = $('<div class="domegis-contents" />');
         box.find('.inside').append(container);
+        container.on('click', '.content-item > a', function(e) {
+          e.preventDefault();
+          toggleContentLayers($(this).parent());
+        });
         getList({}, function(list) {
           container.empty().append(list);
-          list.on('click', '.content-item > a', function(e) {
-            e.preventDefault();
-            toggleContentLayers($(this).parent());
-          });
         });
+        box.find('.domegis-search').on('keydown', function() {
+          container.empty().append('<p>Searching...</p>');
+        });
+        box.find('.domegis-search').on('keydown', _.debounce(function() {
+          var val = box.find('.domegis-search').val();
+          if(val) {
+            getList({
+              name: val
+            }, function(list) {
+              container.empty().append(list);
+            });
+          } else {
+            getList({}, function(list) {
+              container.empty().append(list);
+            });
+          }
+        }, 200));
       });
     }
   });
@@ -24,16 +41,22 @@
     var $list = $('<ul />');
     domegis.getContents(query, function(res) {
       contents = res.data;
-      contents.forEach(function(content) {
-        var $item = $('<li id="content-' + content.id + '" class="content-item" />');
-        var $a = $('<a href="#" class="toggle" />').text(content.name);
-        $item.data('contentid', content.id);
-        $item.append($a);
-        $list.append($item);
+      if(!contents.length) {
         if(typeof cb == 'function') {
-          cb($list);
+          cb($('<p>No results were found.</p>'));
         }
-      });
+      } else {
+        contents.forEach(function(content) {
+          var $item = $('<li id="content-' + content.id + '" class="content-item" />');
+          var $a = $('<a href="#" class="toggle" />').text(content.name);
+          $item.attr('data-contentid', content.id);
+          $item.append($a);
+          $list.append($item);
+          if(typeof cb == 'function') {
+            cb($list);
+          }
+        });
+      }
     });
   }
 
@@ -44,9 +67,7 @@
       var id = $item.data('contentid');
       var $list = $('<ul class="content-layers" />');
       domegis.getLayers({
-        query: {
-          contentId: id
-        }
+        contentId: id
       }, function(res) {
         var layers = res.data;
         $item.append($list);

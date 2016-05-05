@@ -33,7 +33,7 @@ if(!class_exists('DomeGIS_Plugin')) {
 
     function scripts() {
       wp_register_script('domegis', $this->get_dir() . 'domegis.js', array('jquery'));
-      wp_enqueue_script('domegis-relation', $this->get_dir() . 'relation.js', array('jquery', 'domegis'));
+      wp_enqueue_script('domegis-relation', $this->get_dir() . 'relation.js', array('jquery', 'underscore', 'domegis'));
       wp_localize_script('domegis-relation', 'domegis_settings', get_domegis_options());
     }
 
@@ -41,13 +41,17 @@ if(!class_exists('DomeGIS_Plugin')) {
       $options = get_domegis_options();
       $post_types = $options['post_types'];
       if(is_array($post_types) && !empty($post_types)) {
-        add_meta_box('domegis-meta-box', __('DomeGIS Relation', 'domegis'), array($this, 'relationship_meta_box'), $post_types, 'side', 'high');
+        add_meta_box('domegis-meta-box', __('DomeGIS', 'domegis'), array($this, 'relationship_meta_box'), $post_types, 'side', 'high');
       }
     }
 
     function relationship_meta_box() {
       $options = get_domegis_options();
       ?>
+      <p><?php _e('Selected related tables and features:', 'domegis'); ?></p>
+      <p>
+        <input type="text" class="domegis-search" placeholder="<?php _e('Search contents', 'domegis'); ?>" />
+      </p>
       <?php
     }
 
