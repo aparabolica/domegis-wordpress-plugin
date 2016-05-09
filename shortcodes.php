@@ -17,6 +17,15 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         'views' => '',
         'baselayer' => 'openstreetmap',
       ), $atts );
+      if(!$a['views']) {
+        global $post;
+        if($post) {
+          $related = get_post_meta($post->ID, '_domegis_related_layers', true);
+          $a['views'] = '';
+        } else {
+          return '';
+        }
+      }
       return '<div class="domegis-map"><iframe src="' . $options['url'] . '#!/map/?views=' . $a['views'] . '&base=' . $a['baselayer'] . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0"></iframe></div>';
     }
 
