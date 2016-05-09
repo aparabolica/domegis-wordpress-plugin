@@ -99,3 +99,4 @@ if(class_exists('DomeGIS_Plugin')) {
 }
 
 include_once($domegis_plugin->get_path() . '/settings.php');
+include_once($domegis_plugin->get_path() . '/shortcodes.php');
