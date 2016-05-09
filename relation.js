@@ -1,21 +1,62 @@
+// Array Remove - By John Resig (MIT Licensed)
+Array.prototype.remove = function(from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
+
 (function($) {
 
-  var domegis = new DomeGIS(domegis_settings.url);
+  var domegis = new DomeGIS(domegis_relation.settings.url);
 
   $(document).ready(function() {
     if($('#domegis-meta-box').length) {
       var $box = $('#domegis-meta-box');
       $box.each(function() {
         var box = $(this);
+
         var container = $('<div class="domegis-contents" />');
-        box.find('.inside').append(container);
-        container.on('click', '.content-item > a', function(e) {
-          e.preventDefault();
-          toggleContentLayers($(this).parent());
+        box.find('.inside .search-results').append(container);
+
+        var input = box.find('#domegis_related_layers_input');
+        var relatedList = $('<ul />');
+        box.find('.related-results').append(relatedList);
+
+        var layers = [];
+
+        var layersStr = input.val();
+        if(layersStr)
+          layers = layersStr.split(',');
+
+        layers.forEach(function(layer) {
+          appendLayer(relatedList, layer);
         });
+
+        relatedList.on('click', '.remove', function() {
+          var layerId = $(this).parent().data('layerid');
+          $(this).parent().remove();
+          layers.remove(layers.indexOf(layerId));
+          updateInput(input, layers);
+        });
+
+        container.on('click', '.layer-item > a', function(e) {
+          e.preventDefault();
+          // ADD LAYER
+          var layerId = $(this).parent().data('layerid');
+          if(layers.indexOf(layerId) == -1) {
+            appendLayer(relatedList, layerId);
+            layers.push(layerId);
+            updateInput(input, layers);
+          }
+        });
+
         getList({}, function(list) {
           container.empty().append(list);
         });
+
+        /*
+         * Search
+         */
         box.find('.domegis-search').on('keydown', function() {
           container.empty().append('<p>Searching...</p>');
         });
@@ -39,17 +80,17 @@
 
   function getList(query, cb) {
     var $list = $('<ul />');
-    domegis.getContents(query, function(res) {
-      contents = res.data;
-      if(!contents.length) {
+    domegis.getLayers(query, function(res) {
+      var layers = res.data;
+      if(!layers.length) {
         if(typeof cb == 'function') {
           cb($('<p>No results were found.</p>'));
         }
       } else {
-        contents.forEach(function(content) {
-          var $item = $('<li id="content-' + content.id + '" class="content-item" />');
-          var $a = $('<a href="#" class="toggle" />').text(content.name);
-          $item.attr('data-contentid', content.id);
+        layers.forEach(function(layer) {
+          var $item = $('<li id="layer-' + layer.id + '" class="layer-item" />');
+          var $a = $('<a href="#" class="toggle" />').text(layer.name);
+          $item.attr('data-layerid', layer.id);
           $item.append($a);
           $list.append($item);
           if(typeof cb == 'function') {
@@ -60,24 +101,20 @@
     });
   }
 
-  function toggleContentLayers($item) {
-    if($item.find('.content-layers').length) {
-      $item.find('.content-layers').remove();
-    } else {
-      var id = $item.data('contentid');
-      var $list = $('<ul class="content-layers" />');
-      domegis.getLayers({
-        contentId: id
-      }, function(res) {
-        var layers = res.data;
-        $item.append($list);
-        layers.forEach(function(layer) {
-          var $item = $('<li />');
-          $item.text(layer.name);
-          $list.append($item);
-        });
+  var appending = [];
+
+  function appendLayer(container, layerId) {
+    if(appending.indexOf(layerId) == -1) {
+      appending.push(layerId);
+      domegis.getLayer(layerId, function(layer) {
+        appending.remove(appending.indexOf(layer.id));
+        container.append('<li data-layerid="' + layer.id + '">[<a href="#" class="remove">x</a>] ' + layer.name + '</li>');
       });
     }
+  }
+
+  function updateInput(input, layers) {
+    input.val(layers.join(','));
   }
 
 })(jQuery);

@@ -16,6 +16,7 @@ if(!class_exists('DomeGIS_Plugin')) {
     function __construct() {
       add_action('add_meta_boxes', array($this, 'register_relationship_meta_box'));
       add_action('admin_enqueue_scripts', array($this, 'scripts'));
+      add_action('save_post', array($this, 'save_post'), 10, 3);
     }
 
     public static function activate() {
@@ -34,7 +35,9 @@ if(!class_exists('DomeGIS_Plugin')) {
     function scripts() {
       wp_register_script('domegis', $this->get_dir() . 'domegis.js', array('jquery'));
       wp_enqueue_script('domegis-relation', $this->get_dir() . 'relation.js', array('jquery', 'underscore', 'domegis'));
-      wp_localize_script('domegis-relation', 'domegis_settings', get_domegis_options());
+      wp_localize_script('domegis-relation', 'domegis_relation', array(
+        'settings' => get_domegis_options()
+      ));
     }
 
     function register_relationship_meta_box() {
@@ -46,13 +49,40 @@ if(!class_exists('DomeGIS_Plugin')) {
     }
 
     function relationship_meta_box() {
+      global $post;
       $options = get_domegis_options();
+      $layers = get_post_meta($post->ID, '_domegis_related_layers', true);
+      if($layers) {
+        $layers = implode(',', $layers);
+      } else {
+        $layers = '';
+      }
       ?>
       <p><?php _e('Select related layers and features:', 'domegis'); ?></p>
       <p>
-        <input type="text" class="domegis-search" placeholder="<?php _e('Search contents', 'domegis'); ?>" />
+        <input type="text" class="domegis-search" placeholder="<?php _e('Search layers', 'domegis'); ?>" />
       </p>
+      <div class="search-results"></div>
+      <hr />
+      <h4><?php _e('Related layers', 'domegis'); ?></h4>
+      <div class="related-results"></div>
+      <input id="domegis_related_layers_input" type="hidden" name="domegis_related_layers" value="<?php echo $layers; ?>" />
       <?php
+    }
+
+    function save_post($post_id, $post, $update) {
+
+      if(!current_user_can("edit_post", $post_id))
+        return $post_id;
+
+      if(defined("DOING_AUTOSAVE") && DOING_AUTOSAVE)
+        return $post_id;
+
+      if(isset($_REQUEST['domegis_related_layers'])) {
+        $layers = explode(',', $_REQUEST['domegis_related_layers']);
+        update_post_meta($post_id, '_domegis_related_layers', $layers);
+      }
+
     }
 
   }

@@ -12,10 +12,20 @@ DomeGIS.prototype.getContents = function(query, cb) {
 };
 
 DomeGIS.prototype.getLayers = function(query, cb) {
-  console.log(query);
   jQuery.get(this.url + '/layers', query, function(res) {
     if(typeof cb == 'function') {
       cb(res);
     }
   }, 'json');
 };
+
+DomeGIS.prototype.getLayer = function(id, cb) {
+  jQuery.get(this.url + '/layers/' + id, function(res) {
+    if(typeof cb == 'function') {
+      cb(res);
+    }
+  }, function(err) {
+    console.log(err);
+  }, 'json')
+}
+;
