@@ -19,6 +19,14 @@ DomeGIS.prototype.getLayers = function(query, cb) {
   }, 'json');
 };
 
+DomeGIS.prototype.getViews = function(query, cb) {
+  jQuery.get(this.url + '/views', query, function(res) {
+    if(typeof cb == 'function') {
+      cb(res);
+    }
+  }, 'json');
+}
+
 DomeGIS.prototype.getLayer = function(id, cb) {
   jQuery.get(this.url + '/layers/' + id, function(res) {
     if(typeof cb == 'function') {
@@ -27,5 +35,4 @@ DomeGIS.prototype.getLayer = function(id, cb) {
   }, function(err) {
     console.log(err);
   }, 'json')
-}
-;
+};

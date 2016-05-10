@@ -108,7 +108,32 @@ Array.prototype.remove = function(from, to) {
       appending.push(layerId);
       domegis.getLayer(layerId, function(layer) {
         appending.remove(appending.indexOf(layer.id));
-        container.append('<li data-layerid="' + layer.id + '">[<a href="#" class="remove">x</a>] ' + layer.name + '</li>');
+        $layer = $('<li data-layerid="' + layer.id + '" />');
+        $layer.html('[<a href="#" class="remove">x</a>] ' + layer.name);
+        container.append($layer);
+        domegis.getViews({
+          layerId: layer.id
+        }, function(res) {
+          var views = res.data;
+          if(views.length) {
+            var $views = $('<ul />');
+            $layer.append($views);
+            views.forEach(function(view) {
+              var $li = $('<li data-viewid="' + view.id + '" />');
+              var $input = $('<input />');
+              var ref ='domegis-view-' + view.id;
+              $input.attr('id', ref);
+              $input.attr('type', 'radio');
+              $input.attr('name', 'domegis_layer_view[' + layer.id + ']');
+              $input.attr('value', view.id);
+              var $label = $('<label />');
+              $label.attr('for', ref);
+              $label.text(view.name);
+              $li.append($input).append($label);
+              $views.append($li);
+            });
+          }
+        });
       });
     }
   }
