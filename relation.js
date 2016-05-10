@@ -50,10 +50,6 @@ Array.prototype.remove = function(from, to) {
           }
         });
 
-        getList({}, function(list) {
-          container.empty().append(list);
-        });
-
         /*
          * Search
          */
@@ -63,25 +59,21 @@ Array.prototype.remove = function(from, to) {
         box.find('.domegis-search').on('keydown', _.debounce(function() {
           var val = box.find('.domegis-search').val();
           if(val) {
-            getList({
-              name: val
-            }, function(list) {
+            getList(val, function(list) {
               container.empty().append(list);
             });
           } else {
-            getList({}, function(list) {
-              container.empty().append(list);
-            });
+            container.empty();
           }
         }, 200));
       });
     }
   });
 
-  function getList(query, cb) {
+  function getList(searchTerm, cb) {
     var $list = $('<ul />');
-    domegis.getLayers(query, function(res) {
-      var layers = res.data;
+    domegis.search(searchTerm, function(res) {
+      var layers = res.layers;
       if(!layers.length) {
         if(typeof cb == 'function') {
           cb($('<p>No results were found.</p>'));

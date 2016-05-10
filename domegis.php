@@ -64,9 +64,11 @@ if(!class_exists('DomeGIS_Plugin')) {
       </p>
       <div class="search-results"></div>
       <hr />
-      <h4><?php _e('Related layers', 'domegis'); ?></h4>
-      <div class="related-results"></div>
-      <input id="domegis_related_layers_input" type="hidden" name="domegis_related_layers" value="<?php echo $layers; ?>" />
+      <div class="domegis-related-layers">
+        <h4><?php _e('Related layers', 'domegis'); ?></h4>
+        <div class="related-results"></div>
+        <input id="domegis_related_layers_input" type="hidden" name="domegis_related_layers" value="<?php echo $layers; ?>" />
+      </div>
       <?php
     }
 

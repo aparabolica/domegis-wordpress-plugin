@@ -36,3 +36,13 @@ DomeGIS.prototype.getLayer = function(id, cb) {
     console.log(err);
   }, 'json')
 };
+
+DomeGIS.prototype.search = function(term, cb) {
+  jQuery.get(this.url + '/search', {
+    term: term
+  }, function(res) {
+    if(typeof cb == 'function') {
+      cb(res);
+    }
+  });
+}
