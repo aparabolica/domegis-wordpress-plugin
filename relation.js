@@ -24,8 +24,6 @@ Array.prototype.remove = function(from, to) {
 
         var layers = JSON.parse(input.val());
 
-        console.log(layers);
-
         if(_.isArray(layers)) {
           layers.forEach(function(layerId) {
             appendLayer(relatedList, layerId, false);
