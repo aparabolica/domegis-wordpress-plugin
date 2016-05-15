@@ -53,9 +53,9 @@ if(!class_exists('DomeGIS_Plugin')) {
       $options = get_domegis_options();
       $layers = get_post_meta($post->ID, '_domegis_related_layers', true);
       if($layers) {
-        $layers = implode(',', $layers);
+        $layers = json_encode($layers);
       } else {
-        $layers = '';
+        $layers = '[]';
       }
       ?>
       <p><?php _e('Select related layers and features:', 'domegis'); ?></p>
@@ -65,9 +65,9 @@ if(!class_exists('DomeGIS_Plugin')) {
       <div class="search-results"></div>
       <hr />
       <div class="domegis-related-layers">
-        <h4><?php _e('Related layers', 'domegis'); ?></h4>
+        <h4><?php _e('Associated layers', 'domegis'); ?></h4>
         <div class="related-results"></div>
-        <input id="domegis_related_layers_input" type="hidden" name="domegis_related_layers" value="<?php echo $layers; ?>" />
+        <input id="domegis_related_layers_input" type="hidden" name="domegis_related_layers" value='<?php echo $layers; ?>' />
       </div>
       <?php
     }
@@ -80,9 +80,13 @@ if(!class_exists('DomeGIS_Plugin')) {
       if(defined("DOING_AUTOSAVE") && DOING_AUTOSAVE)
         return $post_id;
 
-      if(isset($_REQUEST['domegis_related_layers'])) {
-        $layers = explode(',', $_REQUEST['domegis_related_layers']);
-        update_post_meta($post_id, '_domegis_related_layers', $layers);
+      // if(isset($_REQUEST['domegis_related_layers'])) {
+      //   $layers = explode(',', $_REQUEST['domegis_related_layers']);
+      //   update_post_meta($post_id, '_domegis_related_layers', $layers);
+      // }
+
+      if(isset($_REQUEST['domegis_layer_view'])) {
+        update_post_meta($post_id, '_domegis_related_layers', $_REQUEST['domegis_layer_view']);
       }
 
     }

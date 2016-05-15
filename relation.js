@@ -22,15 +22,19 @@ Array.prototype.remove = function(from, to) {
         var relatedList = $('<ul />');
         box.find('.related-results').append(relatedList);
 
-        var layers = [];
+        var layers = JSON.parse(input.val());
 
-        var layersStr = input.val();
-        if(layersStr)
-          layers = layersStr.split(',');
+        console.log(layers);
 
-        layers.forEach(function(layer) {
-          appendLayer(relatedList, layer);
-        });
+        if(_.isArray(layers)) {
+          layers.forEach(function(layerId) {
+            appendLayer(relatedList, layerId, false);
+          });
+        } else {
+          for(var layerId in layers) {
+            appendLayer(relatedList, layerId, layers[layerId]);
+          }
+        }
 
         relatedList.on('click', '.remove', function() {
           var layerId = $(this).parent().data('layerid');
@@ -95,13 +99,13 @@ Array.prototype.remove = function(from, to) {
 
   var appending = [];
 
-  function appendLayer(container, layerId) {
+  function appendLayer(container, layerId, viewId) {
     if(appending.indexOf(layerId) == -1) {
       appending.push(layerId);
+      var $layer = $('<li data-layerid="' + layerId + '" />');
       domegis.getLayer(layerId, function(layer) {
         appending.remove(appending.indexOf(layer.id));
-        $layer = $('<li data-layerid="' + layer.id + '" />');
-        $layer.html('[<a href="#" class="remove">x</a>] ' + layer.name);
+        $layer.html(layer.name + ' <a href="#" class="button remove" tabindex="0">x</a> ');
         container.append($layer);
         domegis.getViews({
           layerId: layer.id
@@ -110,7 +114,11 @@ Array.prototype.remove = function(from, to) {
           if(views.length) {
             var $views = $('<ul />');
             $layer.append($views);
-            views.forEach(function(view) {
+            views.forEach(function(view, i) {
+              var selected = false;
+              if((viewId && viewId == view.id) || i == 0) {
+                selected = true;
+              }
               var $li = $('<li data-viewid="' + view.id + '" />');
               var $input = $('<input />');
               var ref ='domegis-view-' + view.id;
@@ -118,6 +126,8 @@ Array.prototype.remove = function(from, to) {
               $input.attr('type', 'radio');
               $input.attr('name', 'domegis_layer_view[' + layer.id + ']');
               $input.attr('value', view.id);
+              if(selected)
+                $input.attr('checked', true);
               var $label = $('<label />');
               $label.attr('for', ref);
               $label.text(view.name);
