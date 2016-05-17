@@ -37,18 +37,16 @@ Array.prototype.remove = function(from, to) {
         relatedList.on('click', '.remove', function() {
           var layerId = $(this).parent().data('layerid');
           $(this).parent().remove();
-          layers.remove(layers.indexOf(layerId));
-          updateInput(input, layers);
+          delete layers[layerId];
         });
 
         container.on('click', '.layer-item > a', function(e) {
           e.preventDefault();
           // ADD LAYER
           var layerId = $(this).parent().data('layerid');
-          if(layers.indexOf(layerId) == -1) {
+          if(!layers[layerId]) {
             appendLayer(relatedList, layerId);
-            layers.push(layerId);
-            updateInput(input, layers);
+            layers[layerId] = true;
           }
         });
 
@@ -136,10 +134,6 @@ Array.prototype.remove = function(from, to) {
         });
       });
     }
-  }
-
-  function updateInput(input, layers) {
-    input.val(layers.join(','));
   }
 
 })(jQuery);

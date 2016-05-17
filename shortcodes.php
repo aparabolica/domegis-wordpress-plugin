@@ -26,7 +26,16 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
           return '';
         }
       }
-      return '<div class="domegis-map"><iframe src="' . $options['url'] . '#!/map/?views=' . $a['views'] . '&base=' . $a['baselayer'] . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0"></iframe></div>';
+
+      if($a['views']) {
+        $views = $a['views'];
+      } else {
+        global $post;
+        $post_layers = get_post_meta($post->ID, '_domegis_related_layers', true);
+        $views = implode(',', array_values($post_layers));
+      }
+
+      return '<div class="domegis-map"><iframe src="' . $options['url'] . '#!/map/?views=' . $views . '&base=' . $a['baselayer'] . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0"></iframe></div>';
     }
 
     function wp_head() {
