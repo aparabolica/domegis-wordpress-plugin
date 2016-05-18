@@ -66,6 +66,38 @@ Array.prototype.remove = function(from, to) {
             container.empty();
           }
         }, 200));
+
+        /*
+         * Feature search
+         */
+        var fContainer = $('<div class="domegis-features" />');
+        box.find('.domegis-related-feature .feature-results').append(fContainer);
+        var fSelectedContainer = box.find('.selected-feature');
+
+        fContainer.on('click', '.feature-item > a', function(e) {
+          e.preventDefault();
+          // SELECT FEATURE
+          var feature = {
+            id: $(this).parent().data('featureid'),
+            layerId: $(this).parent().data('layerid'),
+            label: $(this).parent().data('featurelabel')
+          };
+          selectFeature(fSelectedContainer, feature);
+        });
+
+        box.find('.domegis-feature-search').on('keydown', function() {
+          fContainer.empty().append('<p>Searching...</p>');
+        });
+        box.find('.domegis-feature-search').on('keydown', _.debounce(function() {
+          var val = box.find('.domegis-feature-search').val();
+          if(val) {
+            getFeatList(Object.keys(layers), val, function(list) {
+              fContainer.empty().append(list);
+            });
+          } else {
+            fContainer.empty();
+          }
+        }, 300));
       });
     }
   });
@@ -90,6 +122,50 @@ Array.prototype.remove = function(from, to) {
           }
         });
       }
+    });
+  }
+
+  function getFeatList(layerIds, searchTerm, cb) {
+    var $list = $('<ul />');
+    var count = 0;
+    var total = layerIds.length;
+    var _cb = function(res) {
+      count++;
+      var features = res.features;
+      if(features.length) {
+        features.forEach(function(feature) {
+          var propVal = foundPropVal(searchTerm, feature);
+          var $item = $('<li id="feature-' + feature.layerId + '-' + feature.id + '" class="feature-item" />');
+          var $a = $('<a href="#" class="toggle" />').text(propVal);
+          $item.attr('data-featureid', feature.id);
+          $item.attr('data-layerid', feature.layerId);
+          $item.attr('data-featurelabel', propVal);
+          $item.append($a);
+          $list.append($item);
+          if(count == total) {
+            _return($list);
+          }
+        });
+      }
+    };
+    var _return = function() {
+      if(typeof cb == 'function') {
+        if($list.find('li').length) {
+          cb($list);
+        } else {
+          cb('<p>No results were found.</p>');
+        }
+      }
+    }
+    layerIds.forEach(function(id) {
+      domegis.featureSearch(id, searchTerm, _cb);
+    });
+  }
+
+  function foundPropVal(term, object) {
+    return _.find(object, function(item, key) {
+      if(typeof item == 'string')
+        return item.indexOf(term) !== -1;
     });
   }
 
@@ -134,6 +210,13 @@ Array.prototype.remove = function(from, to) {
         });
       });
     }
+  }
+
+  function selectFeature(container, feature) {
+    container.find('h5').text(feature.label);
+    container.find('#domegis_related_feature_id').val(feature.id);
+    container.find('#domegis_related_feature_layerid').val(feature.layerId);
+    container.find('#domegis_related_feature_label').val(feature.label);
   }
 
 })(jQuery);

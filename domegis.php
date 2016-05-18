@@ -52,15 +52,17 @@ if(!class_exists('DomeGIS_Plugin')) {
       global $post;
       $options = get_domegis_options();
       $layers = get_post_meta($post->ID, '_domegis_related_layers', true);
+      $feature = get_post_meta($post->ID, '_domegis_related_feature', true);
+      if(!$feature) $feature = array();
       if($layers) {
         $layers = json_encode($layers);
       } else {
         $layers = '[]';
       }
       ?>
-      <p><?php _e('Select related layers and features:', 'domegis'); ?></p>
+      <p><?php _e('Connect your content to DomeGIS layers:', 'domegis'); ?></p>
       <p>
-        <input type="text" class="domegis-search" placeholder="<?php _e('Search layers', 'domegis'); ?>" />
+        <input type="text" class="domegis-search" placeholder="<?php _e('Search layers...', 'domegis'); ?>" style="width:100%;" />
       </p>
       <div class="search-results"></div>
       <hr />
@@ -68,6 +70,18 @@ if(!class_exists('DomeGIS_Plugin')) {
         <h4><?php _e('Associated layers', 'domegis'); ?></h4>
         <div class="related-results"></div>
         <input id="domegis_related_layers_input" type="hidden" name="domegis_related_layers" value='<?php echo $layers; ?>' />
+      </div>
+      <div class="domegis-related-feature">
+        <h4><?php _e('Connect to a single feature based on associated layers', 'domegis'); ?></h4>
+        <input type="text" class="domegis-feature-search" placeholder="<?php _e('Search features...', 'domegis'); ?>" style="width:100%;" />
+        <div class="feature-results"></div>
+        <div class="selected-feature">
+          <h4><?php _e('Selected feature', 'domegis'); ?></h4>
+          <h5><?php if(isset($feature['label'])) echo $feature['label']; ?></h5>
+          <input id="domegis_related_feature_id" type="hidden" name="domegis_related_feature[id]" value="<?php if(isset($feature['id'])) echo $feature['id']; ?>" />
+          <input id="domegis_related_feature_layerid" type="hidden" name="domegis_related_feature[layer_id]" value="<?php if(isset($feature['layer_id'])) echo $feature['layer_id']; ?>" />
+          <input id="domegis_related_feature_label" type="hidden" name="domegis_related_feature[label]" value="<?php if(isset($feature['label'])) echo $feature['label']; ?>" />
+        </div>
       </div>
       <?php
     }
@@ -87,6 +101,9 @@ if(!class_exists('DomeGIS_Plugin')) {
 
       if(isset($_REQUEST['domegis_layer_view'])) {
         update_post_meta($post_id, '_domegis_related_layers', $_REQUEST['domegis_layer_view']);
+      }
+      if(isset($_REQUEST['domegis_related_feature'])) {
+        update_post_meta($post_id, '_domegis_related_feature', $_REQUEST['domegis_related_feature']);
       }
 
     }
