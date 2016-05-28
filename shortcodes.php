@@ -15,6 +15,7 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         'width' => '100%',
         'height' => '400',
         'views' => '',
+        'lang' => '',
         'baselayer' => 'openstreetmap',
       ), $atts );
       if(!$a['views']) {
@@ -35,7 +36,15 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         $views = implode(',', array_values($post_layers));
       }
 
-      return '<div class="domegis-map"><iframe src="' . $options['url'] . '#!/map/?views=' . $views . '&base=' . $a['baselayer'] . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0"></iframe></div>';
+      $url = $options['url'] . '#!/map/?views=' . $views;
+
+      if($a['baselayer'])
+        $url .= '&base=' . $a['baselayer'];
+
+      if($a['lang'])
+        $url .= '&lang=' . $a['lang'];
+
+      return '<div class="domegis-map"><iframe src="' . $url . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0"></iframe></div>';
     }
 
     function wp_head() {
