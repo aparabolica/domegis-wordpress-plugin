@@ -113,7 +113,7 @@ Array.prototype.remove = function(from, to) {
       } else {
         layers.forEach(function(layer) {
           var $item = $('<li id="layer-' + layer.id + '" class="layer-item" />');
-          var $a = $('<a href="#" class="toggle" />').text(layer.name);
+          var $a = $('<a href="#" class="toggle" />').text(langSplit(layer.name)['en']);
           $item.attr('data-layerid', layer.id);
           $item.append($a);
           $list.append($item);
@@ -177,7 +177,7 @@ Array.prototype.remove = function(from, to) {
       var $layer = $('<li data-layerid="' + layerId + '" />');
       domegis.getLayer(layerId, function(layer) {
         appending.remove(appending.indexOf(layer.id));
-        $layer.html(layer.name + ' <a href="#" class="button remove" tabindex="0">x</a> ');
+        $layer.html(langSplit(layer.name)['en'] + ' <a href="#" class="button remove" tabindex="0">x</a> ');
         container.append($layer);
         domegis.getViews({
           layerId: layer.id
