@@ -15,8 +15,9 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         'width' => '100%',
         'height' => '400',
         'views' => '',
+        'feature' => '',
         'lang' => '',
-        'baselayer' => 'openstreetmap',
+        'baselayer' => 'infoamazonia',
       ), $atts );
       if(!$a['views']) {
         global $post;
@@ -33,10 +34,23 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
       } else {
         global $post;
         $post_layers = get_post_meta($post->ID, '_domegis_related_layers', true);
-        $views = implode(',', array_values($post_layers));
+        if($post_layers)
+          $views = implode(',', array_values($post_layers));
+      }
+
+      if($a['feature']) {
+        $feature = $a['feature'];
+      } else {
+        global $post;
+        $post_feature = get_post_meta($post->ID, '_domegis_related_feature', true);
+        if($post_feature)
+          $feature = $post_feature['layer_id'] . ':' . $post_feature['id'];
       }
 
       $url = $options['url'] . '#!/map/?views=' . $views;
+
+      if($feature)
+        $url .= '&feature=' . $feature;
 
       if($a['baselayer'])
         $url .= '&base=' . $a['baselayer'];
@@ -44,7 +58,8 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
       if($a['lang'])
         $url .= '&lang=' . $a['lang'];
 
-      return '<div class="domegis-map"><iframe src="' . $url . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0"></iframe></div>';
+
+      return '<div class="domegis-map"><iframe src="' . $url . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0" allowfullscreen></iframe></div>';
     }
 
     function wp_head() {
