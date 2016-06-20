@@ -17,7 +17,7 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         'views' => '',
         'feature' => '',
         'lang' => '',
-        'baselayer' => 'infoamazonia',
+        'base' => $options['baselayer'],
       ), $atts );
       if(!$a['views']) {
         global $post;
@@ -52,8 +52,8 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
       if($feature)
         $url .= '&feature=' . $feature;
 
-      if($a['baselayer'])
-        $url .= '&base=' . $a['baselayer'];
+      if($a['base'])
+        $url .= '&base=' . $a['base'];
 
       if($a['lang'])
         $url .= '&lang=' . $a['lang'];

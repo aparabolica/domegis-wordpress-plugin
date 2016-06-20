@@ -16,7 +16,8 @@ if(!class_exists('DomeGIS_Plugin_Settings')) {
       if(!$options) {
         $options = array(
           'url' => '',
-          'post_types' => get_post_types(array('public' => true))
+          'post_types' => get_post_types(array('public' => true)),
+          'baselayer' => 'osm'
         );
       }
       return $options;
@@ -75,6 +76,14 @@ if(!class_exists('DomeGIS_Plugin_Settings')) {
       );
 
       add_settings_field(
+        'domegis_baselayer',
+        __('Default base layer', 'domegis'),
+        array($this, 'field_baselayer'),
+        'domegis',
+        'domegis_general'
+      );
+
+      add_settings_field(
         'domegis_post_types',
         __('Relational post types', 'domegis'),
         array($this, 'field_post_types'),
@@ -92,6 +101,22 @@ if(!class_exists('DomeGIS_Plugin_Settings')) {
       ?>
       <input class="regular-text" id="domegis_url" type="text" name="domegis[url]" value="<?php echo $url; ?>" />
       <p class="description"><?php _e('The root url for your DomeGIS platform.', 'domegis'); ?></p>
+      <?php
+    }
+
+    function field_baselayer() {
+      $baselayer = $this->options['baselayer'];
+      $layers = array(
+        'osm' => __('OpenStreetMap', 'domegis'),
+        'infoamazonia' => __('InfoAmazonia', 'domegis'),
+        'mapquest_satellite' => __('MapQuest Satellite', 'domegis')
+      );
+      ?>
+      <select id="domegis_baselayer" name="domegis[baselayer]">
+        <?php foreach($layers as $val => $label) : ?>
+          <option value="<?php echo $val; ?>" <?php if($baselayer == $val) echo 'selected'; ?>><?php echo $label; ?></option>
+        <?php endforeach; ?>
+      </select>
       <?php
     }
 
