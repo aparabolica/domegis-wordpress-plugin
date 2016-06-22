@@ -54,6 +54,7 @@ if(!class_exists('DomeGIS_Plugin')) {
       $options = get_domegis_options();
       $layers = get_post_meta($post->ID, '_domegis_related_layers', true);
       $feature = get_post_meta($post->ID, '_domegis_related_feature', true);
+      $options = get_post_meta($post->ID, '_domegis_options', true);
       if(!$feature) $feature = array();
       if($layers) {
         $layers = json_encode($layers);
@@ -84,6 +85,13 @@ if(!class_exists('DomeGIS_Plugin')) {
           <input id="domegis_related_feature_label" type="hidden" name="domegis_related_feature[label]" value="<?php if(isset($feature['label'])) echo $feature['label']; ?>" />
           <a href="#" class="domegis-reset-feature">[<?php _e('reset feature', 'domegis'); ?>]</a>
         </div>
+        <div class="domegis-scrollwhellzoom">
+          <p>
+            <label for="domegis_scroll_input">
+              <input id="domegis_scroll_input" type="checkbox" name="domegis_options[scrollwheelzoom]" <?php if(isset($options['scrollwheelzoom']) && $options['scrollwheelzoom']) echo 'checked'; ?> /> <?php _e('Enable scroll wheel zoom', 'domegis'); ?>
+            </label>
+          </p>
+        </div>
       </div>
       <?php
     }
@@ -106,6 +114,12 @@ if(!class_exists('DomeGIS_Plugin')) {
           update_post_meta($post_id, '_domegis_related_layers', $_REQUEST['domegis_layer_view']);
         } else {
           delete_post_meta($post_id, '_domegis_related_layers');
+        }
+
+        if(isset($_REQUEST['domegis_options'])) {
+          update_post_meta($post_id, '_domegis_options', $_REQUEST['domegis_options']);
+        } else {
+          delete_post_meta($post_id, '_domegis_options');
         }
 
         if(isset($_REQUEST['domegis_related_feature'])) {

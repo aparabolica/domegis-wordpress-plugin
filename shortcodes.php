@@ -18,6 +18,7 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         'feature' => '',
         'lang' => '',
         'base' => $options['baselayer'],
+        'scroll' => ''
       ), $atts );
       if(!$a['views']) {
         global $post;
@@ -29,10 +30,11 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         }
       }
 
+      global $post;
+
       if($a['views']) {
         $views = $a['views'];
       } else {
-        global $post;
         $post_layers = get_post_meta($post->ID, '_domegis_related_layers', true);
         if($post_layers) {
           $views = array();
@@ -40,6 +42,15 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
             $views[] = $layer['id'] . ':' . ($layer['hidden'] ? 0 : 1);
           }
           $views = implode(',', $views);
+        }
+      }
+
+      if(!$a['scroll'] && $a['scroll'] !== false) {
+        $post_options = get_post_meta($post->ID, '_domegis_options', true);
+        if($post_options) {
+          if($post_options['scrollwheelzoom']) {
+            $a['scroll'] = $post_options['scrollwheelzoom'];
+          }
         }
       }
 
@@ -65,6 +76,9 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
 
       if($a['lang'])
         $url .= '&lang=' . $a['lang'];
+
+      if($a['scroll'])
+        $url .= '&scroll=' . $a['scroll'];
 
 
       return '<div class="domegis-map"><iframe src="' . $url . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0" allowfullscreen></iframe></div>';
