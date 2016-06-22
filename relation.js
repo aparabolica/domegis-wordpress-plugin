@@ -85,6 +85,11 @@ Array.prototype.remove = function(from, to) {
           selectFeature(fSelectedContainer, feature);
         });
 
+        box.on('click', '.domegis-reset-feature', function(e) {
+          e.preventDefault();
+          resetFeature(fSelectedContainer);
+        });
+
         box.find('.domegis-feature-search').on('keydown', function() {
           fContainer.empty().append('<p>Searching...</p>');
         });
@@ -98,7 +103,12 @@ Array.prototype.remove = function(from, to) {
             fContainer.empty();
           }
         }, 300));
+        // validation input to prevent delete database data from broken js
+        var $validation = $('<input type="hidden" name="domegis_loaded" value="ok" />');
+        box.append($validation);
+
       });
+
     }
   });
 
@@ -171,7 +181,8 @@ Array.prototype.remove = function(from, to) {
 
   var appending = [];
 
-  function appendLayer(container, layerId, viewId) {
+  function appendLayer(container, layerId, layerView) {
+    layerView = layerView || {};
     if(appending.indexOf(layerId) == -1) {
       appending.push(layerId);
       var $layer = $('<li data-layerid="' + layerId + '" />');
@@ -188,25 +199,47 @@ Array.prototype.remove = function(from, to) {
             $layer.append($views);
             views.forEach(function(view, i) {
               var selected = false;
-              if((viewId && viewId == view.id) || i == 0) {
+              if((layerView.id && layerView.id == view.id) || i == 0) {
                 selected = true;
               }
               var $li = $('<li data-viewid="' + view.id + '" />');
               var $input = $('<input />');
-              var ref ='domegis-view-' + view.id;
+              var ref = 'domegis-view-' + view.id;
               $input.attr('id', ref);
               $input.attr('type', 'radio');
-              $input.attr('name', 'domegis_layer_view[' + layer.id + ']');
+              $input.attr('name', 'domegis_layer_view[' + layer.id + '][id]');
               $input.attr('value', view.id);
               if(selected)
                 $input.attr('checked', true);
               var $label = $('<label />');
               $label.attr('for', ref);
               $label.text(view.name);
-              $li.append($input).append($label);
+
+              $li
+                .append($input)
+                .append($label);
+
               $views.append($li);
             });
+
+            var $hiddenInput = $('<input />');
+            var hiddenRef = 'domegis-view-' + layer.id + '-hidden';
+            $hiddenInput
+              .attr('id', hiddenRef)
+              .attr('type', 'checkbox')
+              .attr('name', 'domegis_layer_view[' + layer.id + '][hidden]')
+              .attr('checked', layerView.hidden)
+              .attr('value', 1);
+            var $hiddenLabel = $('<label />');
+            $hiddenLabel.attr('for', hiddenRef);
+            $hiddenLabel.text('Hidden by default');
+
+            $layer
+              .append($hiddenInput)
+              .append($hiddenLabel);
+
           }
+
         });
       });
     }
@@ -217,6 +250,13 @@ Array.prototype.remove = function(from, to) {
     container.find('#domegis_related_feature_id').val(feature.id);
     container.find('#domegis_related_feature_layerid').val(feature.layerId);
     container.find('#domegis_related_feature_label').val(feature.label);
+  }
+
+  function resetFeature(container) {
+    container.find('h5').text('');
+    container.find('#domegis_related_feature_id').val('');
+    container.find('#domegis_related_feature_layerid').val('');
+    container.find('#domegis_related_feature_label').val('');
   }
 
 })(jQuery);

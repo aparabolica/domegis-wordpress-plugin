@@ -82,6 +82,7 @@ if(!class_exists('DomeGIS_Plugin')) {
           <input id="domegis_related_feature_id" type="hidden" name="domegis_related_feature[id]" value="<?php if(isset($feature['id'])) echo $feature['id']; ?>" />
           <input id="domegis_related_feature_layerid" type="hidden" name="domegis_related_feature[layer_id]" value="<?php if(isset($feature['layer_id'])) echo $feature['layer_id']; ?>" />
           <input id="domegis_related_feature_label" type="hidden" name="domegis_related_feature[label]" value="<?php if(isset($feature['label'])) echo $feature['label']; ?>" />
+          <a href="#" class="domegis-reset-feature">[<?php _e('reset feature', 'domegis'); ?>]</a>
         </div>
       </div>
       <?php
@@ -100,11 +101,18 @@ if(!class_exists('DomeGIS_Plugin')) {
       //   update_post_meta($post_id, '_domegis_related_layers', $layers);
       // }
 
-      if(isset($_REQUEST['domegis_layer_view'])) {
-        update_post_meta($post_id, '_domegis_related_layers', $_REQUEST['domegis_layer_view']);
-      }
-      if(isset($_REQUEST['domegis_related_feature'])) {
-        update_post_meta($post_id, '_domegis_related_feature', $_REQUEST['domegis_related_feature']);
+      if(isset($_REQUEST['domegis_loaded'])) {
+        if(isset($_REQUEST['domegis_layer_view'])) {
+          update_post_meta($post_id, '_domegis_related_layers', $_REQUEST['domegis_layer_view']);
+        } else {
+          delete_post_meta($post_id, '_domegis_related_layers');
+        }
+
+        if(isset($_REQUEST['domegis_related_feature'])) {
+          update_post_meta($post_id, '_domegis_related_feature', $_REQUEST['domegis_related_feature']);
+        } else {
+          delete_post_meta($post_id, '_domegis_related_feature');
+        }
       }
 
     }
