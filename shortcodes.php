@@ -39,7 +39,8 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         if($post_layers) {
           $views = array();
           foreach($post_layers as $layer) {
-            $views[] = $layer['id'] . ':' . ($layer['hidden'] ? 0 : 1);
+            if(isset($layer['id']))
+              $views[] = $layer['id'] . ':' . ($layer['hidden'] ? 0 : 1);
           }
           $views = implode(',', $views);
         }
