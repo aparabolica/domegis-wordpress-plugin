@@ -17,7 +17,7 @@ if(!class_exists('DomeGIS_Plugin_Settings')) {
         $options = array(
           'url' => '',
           'post_types' => get_post_types(array('public' => true)),
-          'baselayer' => 'osm'
+          'baselayer' => 'bing'
         );
       }
       return $options;
@@ -107,9 +107,9 @@ if(!class_exists('DomeGIS_Plugin_Settings')) {
     function field_baselayer() {
       $baselayer = $this->options['baselayer'];
       $layers = array(
+        'bing' => __('Bing Aerial', 'domegis'),
         'osm' => __('OpenStreetMap', 'domegis'),
-        'infoamazonia' => __('InfoAmazonia', 'domegis'),
-        'mapquest_satellite' => __('MapQuest Satellite', 'domegis')
+        'infoamazonia' => __('InfoAmazonia', 'domegis')
       );
       ?>
       <select id="domegis_baselayer" name="domegis[baselayer]">
