@@ -32,8 +32,11 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
 
       global $post;
 
+      $custom_views = false;
+
       if($a['views']) {
         $views = $a['views'];
+        $custom_views = true;
       } else {
         $post_layers = get_post_meta($post->ID, '_domegis_related_layers', true);
         if($post_layers) {
@@ -60,7 +63,7 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
 
       if($a['feature']) {
         $feature = $a['feature'];
-      } else {
+      } elseif(!$custom_views) {
         global $post;
         $post_feature = get_post_meta($post->ID, '_domegis_related_feature', true);
         if($post_feature)
