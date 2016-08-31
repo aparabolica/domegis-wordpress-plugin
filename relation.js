@@ -75,6 +75,7 @@ Array.prototype.remove = function(from, to) {
         var fSelectedContainer = box.find('.selected-feature');
 
         fContainer.on('click', '.feature-item > a', function(e) {
+          console.log($(this).parent().data());
           e.preventDefault();
           // SELECT FEATURE
           var feature = {
@@ -147,7 +148,8 @@ Array.prototype.remove = function(from, to) {
           var propVal = foundPropVal(searchTerm, feature);
           var $item = $('<li id="feature-' + feature.layerId + '-' + feature.id + '" class="feature-item" />');
           var $a = $('<a href="#" class="toggle" />').text(propVal);
-          $item.attr('data-featureid', feature.id);
+          console.log(feature);
+          $item.attr('data-featureid', feature.domegis_id);
           $item.attr('data-layerid', feature.layerId);
           $item.attr('data-featurelabel', propVal);
           $item.append($a);
@@ -188,14 +190,32 @@ Array.prototype.remove = function(from, to) {
       var $layer = $('<li data-layerid="' + layerId + '" />');
       domegis.getLayer(layerId, function(layer) {
         appending.remove(appending.indexOf(layer.id));
-        $layer.html(langSplit(layer.name)['en'] + ' <a href="#" class="button remove" tabindex="0">x</a> ');
+        $layer.html('<hr/><a href="#" class="button remove" tabindex="0" style="float:right;">x</a> <h5>' + langSplit(layer.name)['en'] + '</h5>');
         container.append($layer);
+
+        var $hiddenInput = $('<input />');
+        var hiddenRef = 'domegis-view-' + layer.id + '-hidden';
+        $hiddenInput
+          .attr('id', hiddenRef)
+          .attr('type', 'checkbox')
+          .attr('name', 'domegis_layer_view[' + layer.id + '][hidden]')
+          .attr('checked', layerView.hidden)
+          .attr('value', 1);
+        var $hiddenLabel = $('<label />');
+        $hiddenLabel.attr('for', hiddenRef);
+        $hiddenLabel.text('Hidden by default');
+
+        $layer
+          .append($hiddenInput)
+          .append($hiddenLabel);
+
         domegis.getViews({
           layerId: layer.id
         }, function(res) {
           var views = res.data;
           if(views.length) {
             var $views = $('<ul />');
+            $layer.append($('<h6><strong>Views:</strong></h6>'));
             $layer.append($views);
             views.forEach(function(view, i) {
               var selected = false;
@@ -221,22 +241,6 @@ Array.prototype.remove = function(from, to) {
 
               $views.append($li);
             });
-
-            var $hiddenInput = $('<input />');
-            var hiddenRef = 'domegis-view-' + layer.id + '-hidden';
-            $hiddenInput
-              .attr('id', hiddenRef)
-              .attr('type', 'checkbox')
-              .attr('name', 'domegis_layer_view[' + layer.id + '][hidden]')
-              .attr('checked', layerView.hidden)
-              .attr('value', 1);
-            var $hiddenLabel = $('<label />');
-            $hiddenLabel.attr('for', hiddenRef);
-            $hiddenLabel.text('Hidden by default');
-
-            $layer
-              .append($hiddenInput)
-              .append($hiddenLabel);
 
           }
 

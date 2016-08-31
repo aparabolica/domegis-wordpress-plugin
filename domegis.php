@@ -35,7 +35,7 @@ if(!class_exists('DomeGIS_Plugin')) {
     function scripts() {
       wp_register_script('domegis', $this->get_dir() . 'domegis.js', array('jquery'));
       wp_register_script('domegis-language', $this->get_dir() . 'language.js');
-      wp_enqueue_script('domegis-relation', $this->get_dir() . 'relation.js', array('jquery', 'underscore', 'domegis', 'domegis-language'));
+      wp_enqueue_script('domegis-relation', $this->get_dir() . 'relation.js', array('jquery', 'underscore', 'domegis', 'domegis-language'), '0.1.0');
       wp_localize_script('domegis-relation', 'domegis_relation', array(
         'settings' => get_domegis_options()
       ));
