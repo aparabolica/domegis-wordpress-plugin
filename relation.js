@@ -210,7 +210,8 @@ Array.prototype.remove = function(from, to) {
           .append($hiddenLabel);
 
         domegis.getViews({
-          layerId: layer.id
+          layerId: layer.id,
+          $limit: 100
         }, function(res) {
           var views = res.data;
           if(views.length) {
