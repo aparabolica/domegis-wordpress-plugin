@@ -3,7 +3,7 @@
 Plugin Name: DomeGIS
 Plugin URI: http://github.com/ecodigital/domegis-wordpress-plugin
 Description: Connect your DomeGIS platform to your WordPress project
-Version: 0.0.1
+Version: 0.1.0
 Author: Miguel Peixe
 Author URI: http://ecologia.digital/
 License: MIT
