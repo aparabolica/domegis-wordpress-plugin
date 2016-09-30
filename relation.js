@@ -1,11 +1,11 @@
-// Array Remove - By John Resig (MIT Licensed)
-Array.prototype.remove = function(from, to) {
-  var rest = this.slice((to || from) + 1 || this.length);
-  this.length = from < 0 ? this.length + from : from;
-  return this.push.apply(this, rest);
-};
 
 (function($) {
+
+  arrayRemove = function(arr, from, to) {
+    var rest = this.slice((to || from) + 1 || arr.length);
+    arr.length = from < 0 ? arr.length + from : from;
+    return arr.push.apply(arr, rest);
+  };
 
   var domegis = new DomeGIS(domegis_relation.settings.url);
 
@@ -189,7 +189,7 @@ Array.prototype.remove = function(from, to) {
       appending.push(layerId);
       var $layer = $('<li data-layerid="' + layerId + '" />');
       domegis.getLayer(layerId, function(layer) {
-        appending.remove(appending.indexOf(layer.id));
+        appending = arrayRemove(appending, appending.indexOf(index.id));
         $layer.html('<hr/><a href="#" class="button remove" tabindex="0" style="float:right;">x</a> <h5>' + langSplit(layer.name)['en'] + '</h5>');
         container.append($layer);
 

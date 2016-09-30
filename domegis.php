@@ -14,8 +14,8 @@ if(!class_exists('DomeGIS_Plugin')) {
   class DomeGIS_Plugin {
 
     function __construct() {
-      add_action('add_meta_boxes', array($this, 'register_relationship_meta_box'));
       add_action('admin_enqueue_scripts', array($this, 'scripts'));
+      add_action('add_meta_boxes', array($this, 'register_relationship_meta_box'));
       add_action('save_post', array($this, 'save_post'), 10, 3);
     }
 
@@ -33,12 +33,18 @@ if(!class_exists('DomeGIS_Plugin')) {
     }
 
     function scripts() {
+
       wp_register_script('domegis', $this->get_dir() . 'domegis.js', array('jquery'));
-      wp_register_script('domegis-language', $this->get_dir() . 'language.js');
-      wp_enqueue_script('domegis-relation', $this->get_dir() . 'relation.js', array('jquery', 'underscore', 'domegis', 'domegis-language'), '0.1.1');
+      wp_register_script('domegis-language', $this->get_dir() . 'language.js', array(), '0.0.1');
+
+      wp_register_script('domegis-relation', $this->get_dir() . 'relation.js', array('jquery', 'underscore', 'domegis', 'domegis-language'), '0.1.2');
+
       wp_localize_script('domegis-relation', 'domegis_relation', array(
         'settings' => get_domegis_options()
       ));
+
+      wp_enqueue_script('domegis-relation');
+
     }
 
     function register_relationship_meta_box() {
