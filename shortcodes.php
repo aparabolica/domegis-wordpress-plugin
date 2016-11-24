@@ -14,12 +14,14 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
       $a = shortcode_atts( array(
         'width' => '100%',
         'height' => '400',
+        'id' => '',
         'views' => '',
         'feature' => '',
         'lang' => '',
         'base' => $options['baselayer'],
         'scroll' => ''
       ), $atts );
+
       if(!$a['views']) {
         global $post;
         if($post) {
@@ -49,6 +51,9 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         }
       }
 
+      if(!$views && !$a['id'])
+        return '';
+
       if(!$a['scroll'] && $a['scroll'] !== false) {
         $post_options = get_post_meta($post->ID, '_domegis_options', true);
         if($post_options) {
@@ -57,9 +62,6 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
           }
         }
       }
-
-      if(!$views)
-        return '';
 
       if($a['feature']) {
         $feature = $a['feature'];
@@ -70,20 +72,19 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
           $feature = $post_feature['layer_id'] . ':' . $post_feature['id'];
       }
 
-      $url = $options['url'] . '#!/map/?views=' . $views;
-
-      if($feature)
-        $url .= '&feature=' . $feature;
-
-      if($a['base'])
-        $url .= '&base=' . $a['base'];
-
-      if($a['lang'])
-        $url .= '&lang=' . $a['lang'];
-
-      if($a['scroll'])
-        $url .= '&scroll=' . $a['scroll'];
-
+      if($a['id']) {
+        $url = $options['url'] . '#!/maps/' . $a['id'] . '/';
+      } else {
+        $url = $options['url'] . '#!/map/?views=' . $views;
+        if($feature)
+          $url .= '&feature=' . $feature;
+        if($a['base'])
+          $url .= '&base=' . $a['base'];
+        if($a['lang'])
+          $url .= '&lang=' . $a['lang'];
+        if($a['scroll'])
+          $url .= '&scroll=' . $a['scroll'];
+      }
 
       return '<div class="domegis-map"><iframe src="' . $url . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0" allowfullscreen></iframe></div>';
     }

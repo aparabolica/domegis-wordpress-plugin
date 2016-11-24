@@ -2,7 +2,7 @@
 (function($) {
 
   arrayRemove = function(arr, from, to) {
-    var rest = this.slice((to || from) + 1 || arr.length);
+    var rest = arr.slice((to || from) + 1 || arr.length);
     arr.length = from < 0 ? arr.length + from : from;
     return arr.push.apply(arr, rest);
   };
@@ -75,7 +75,6 @@
         var fSelectedContainer = box.find('.selected-feature');
 
         fContainer.on('click', '.feature-item > a', function(e) {
-          console.log($(this).parent().data());
           e.preventDefault();
           // SELECT FEATURE
           var feature = {
@@ -148,7 +147,6 @@
           var propVal = foundPropVal(searchTerm, feature);
           var $item = $('<li id="feature-' + feature.layerId + '-' + feature.id + '" class="feature-item" />');
           var $a = $('<a href="#" class="toggle" />').text(propVal);
-          console.log(feature);
           $item.attr('data-featureid', feature.domegis_id);
           $item.attr('data-layerid', feature.layerId);
           $item.attr('data-featurelabel', propVal);
@@ -189,7 +187,7 @@
       appending.push(layerId);
       var $layer = $('<li data-layerid="' + layerId + '" />');
       domegis.getLayer(layerId, function(layer) {
-        appending = arrayRemove(appending, appending.indexOf(index.id));
+        arrayRemove(appending, appending.indexOf(layer.id));
         $layer.html('<hr/><a href="#" class="button remove" tabindex="0" style="float:right;">x</a> <h5>' + langSplit(layer.name)['en'] + '</h5>');
         container.append($layer);
 
