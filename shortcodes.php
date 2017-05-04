@@ -19,7 +19,8 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         'feature' => '',
         'lang' => '',
         'base' => $options['baselayer'],
-        'scroll' => ''
+        'scroll' => '',
+        'full_legend' => ''
       ), $atts );
 
       if(!$a['views']) {
@@ -84,6 +85,10 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
           $url .= '&lang=' . $a['lang'];
         if($a['scroll'])
           $url .= '&scroll=' . $a['scroll'];
+      }
+
+      if($a['full_legend']) {
+        $url .= '&full_legend=1';
       }
 
       return '<div class="domegis-map"><iframe src="' . $url . '" width="' . $a['width'] . '" height="' . $a['height'] . '" frameborder="0" allowfullscreen></iframe></div>';
