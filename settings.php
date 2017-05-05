@@ -84,6 +84,14 @@ if(!class_exists('DomeGIS_Plugin_Settings')) {
       );
 
       add_settings_field(
+        'domegis_legend_display',
+        __('Default legend display', 'domegis'),
+        array($this, 'field_legend_display'),
+        'domegis',
+        'domegis_general'
+      );
+
+      add_settings_field(
         'domegis_post_types',
         __('Relational post types', 'domegis'),
         array($this, 'field_post_types'),
@@ -113,6 +121,21 @@ if(!class_exists('DomeGIS_Plugin_Settings')) {
       );
       ?>
       <select id="domegis_baselayer" name="domegis[baselayer]">
+        <?php foreach($layers as $val => $label) : ?>
+          <option value="<?php echo $val; ?>" <?php if($baselayer == $val) echo 'selected'; ?>><?php echo $label; ?></option>
+        <?php endforeach; ?>
+      </select>
+      <?php
+    }
+
+    function field_legend_display() {
+      $baselayer = $this->options['legend_display'];
+      $layers = array(
+        'default' => __('Default (automatic height)', 'domegis'),
+        'full_height' => __('Full height', 'domegis')
+      );
+      ?>
+      <select id="domegis_legend_display" name="domegis[legend_display]">
         <?php foreach($layers as $val => $label) : ?>
           <option value="<?php echo $val; ?>" <?php if($baselayer == $val) echo 'selected'; ?>><?php echo $label; ?></option>
         <?php endforeach; ?>

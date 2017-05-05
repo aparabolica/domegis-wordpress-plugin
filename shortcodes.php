@@ -64,6 +64,12 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
         }
       }
 
+      if(!$a['full_legend'] && $a['full_legend'] !== false) {
+        if($options['legend_display'] == 'full_height') {
+          $a['full_legend'] = true;
+        }
+      }
+
       if($a['feature']) {
         $feature = $a['feature'];
       } elseif(!$custom_views) {
@@ -74,7 +80,7 @@ if(!class_exists('DomeGIS_Plugin_Shortcodes')) {
       }
 
       if($a['id']) {
-        $url = $options['url'] . '#!/maps/' . $a['id'] . '/';
+        $url = $options['url'] . '#!/maps/' . $a['id'] . '/?';
       } else {
         $url = $options['url'] . '#!/map/?views=' . $views;
         if($feature)
